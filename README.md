@@ -11,6 +11,10 @@ underneath. Made for learning a subject in a language you are still learning.
 
 > 🇫🇷 [En français plus bas](#en-français).
 
+<img width="1247" height="700" alt="image" src="https://github.com/user-attachments/assets/08504edd-db01-4d5a-9623-0a7e1cdbde67" />
+
+
+
 ## Features
 
 - **Two languages, in sync.** Any two of the lecture's subtitle tracks, drawn over the player and
