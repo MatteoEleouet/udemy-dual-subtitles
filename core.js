@@ -111,7 +111,32 @@
     return best ? { url: best.url, locale: best.locale_id, label: best.video_label || best.title || best.locale_id, auto: isAuto(best) } : null;
   }
 
-  const api = { parseVtt, textAt, pickTrack, cleanText };
+  /**
+   * Settings for someone who has never opened the popup, from their browser's
+   * language: English on top, their own language underneath. An English
+   * browser gets French, the most requested pairing.
+   *
+   * Every context (page, popup) computes the same defaults from the same
+   * input, so nothing has to be written to storage at install. Once a person
+   * changes a setting, chrome.storage.sync keeps theirs — per Chrome profile,
+   * and across their devices when Chrome sync is on.
+   */
+  function defaultSettings(uiLanguage) {
+    const own = String(uiLanguage || 'en').toLowerCase().split(/[-_]/)[0];
+    return {
+      enabled: true,
+      primary: 'en',
+      secondary: own && own !== 'en' ? own : 'fr',
+      primarySize: 100,
+      secondarySize: 70,
+      margin: 3,
+      hideNative: true,
+      translateFallback: true,
+      uiLanguage: 'auto',
+    };
+  }
+
+  const api = { parseVtt, textAt, pickTrack, cleanText, defaultSettings };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.DualSubs = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

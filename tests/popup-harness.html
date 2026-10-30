@@ -1,0 +1,59 @@
+<!doctype html>
+<!--
+  The real popup, outside the extension: fakes chrome.* then loads popup.html's
+  markup and scripts. Serve the extension folder and open
+  http://localhost:8765/tests/popup-harness.html?lang=en (or fr, de…).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/popup.css" />
+    <style>
+      html { background: #888; }
+      body { margin: 20px auto; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+    </style>
+  </head>
+  <body>
+    <script>
+      const browserLang = new URLSearchParams(location.search).get('lang') || 'en-US';
+      let store = {};
+      window.chrome = {
+        i18n: { getUILanguage: () => browserLang },
+        storage: {
+          sync: {
+            get: (defaults, cb) => cb({ ...defaults, ...store }),
+            set: (values) => Object.assign(store, values),
+            clear: (cb) => ((store = {}), cb && cb()),
+          },
+        },
+        tabs: {
+          query: async () => [{ id: 1, url: 'https://www.udemy.com/course/demo/learn/lecture/1' }],
+          sendMessage: async () => ({
+            lectureId: '1',
+            primary: { label: 'English', cues: 214, error: null, auto: false, translated: false },
+            secondary: { label: 'French [Auto]', cues: 214, error: null, auto: true, translated: false },
+          }),
+        },
+      };
+      window.getStore = () => store;
+
+      fetch('/popup.html')
+        .then((response) => response.text())
+        .then(async (html) => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          for (const node of doc.body.children) {
+            if (node.tagName !== 'SCRIPT') document.body.appendChild(document.importNode(node, true));
+          }
+          // Scripts in order, as the popup loads them.
+          for (const script of doc.querySelectorAll('script[src]')) {
+            await new Promise((resolve) => {
+              const element = document.createElement('script');
+              element.src = `/${script.getAttribute('src')}`;
+              element.onload = resolve;
+              document.body.appendChild(element);
+            });
+          }
+        });
+    </script>
+  </body>
+</html>

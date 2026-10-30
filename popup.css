@@ -73,12 +73,53 @@ select {
   color: var(--fg);
 }
 
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* min-width: 0 lets the select shrink, so the button stays inside the popup. */
+.meta .row {
+  flex: 1;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.meta .row select {
+  grid-column: 2;
+  min-width: 0;
+  width: 100%;
+}
+.meta button {
+  flex-shrink: 0;
+}
+button {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+button:hover {
+  color: var(--fg);
+}
+
 footer {
   padding-top: 8px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 12px;
+}
+footer p {
+  margin: 0;
   white-space: pre-line;
+}
+footer .privacy {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.8;
 }
 
 .switch {

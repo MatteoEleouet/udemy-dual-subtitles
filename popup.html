@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>Udemy Dual Subtitles</title>
@@ -7,8 +7,8 @@
   </head>
   <body>
     <header>
-      <h1>Double sous-titres</h1>
-      <label class="switch" title="Activer / désactiver">
+      <h1 data-i18n="title"></h1>
+      <label class="switch" data-i18n-title="toggle">
         <input type="checkbox" id="enabled" />
         <span></span>
       </label>
@@ -16,11 +16,11 @@
 
     <section>
       <label class="row">
-        <span>Langue principale</span>
+        <span data-i18n="primary"></span>
         <select id="primary"></select>
       </label>
       <label class="row">
-        <span>Taille</span>
+        <span data-i18n="size"></span>
         <input type="range" id="primarySize" min="60" max="160" step="5" />
         <output id="primarySizeOut"></output>
       </label>
@@ -28,11 +28,11 @@
 
     <section>
       <label class="row">
-        <span>Seconde langue</span>
+        <span data-i18n="secondary"></span>
         <select id="secondary"></select>
       </label>
       <label class="row">
-        <span>Taille</span>
+        <span data-i18n="size"></span>
         <input type="range" id="secondarySize" min="40" max="140" step="5" />
         <output id="secondarySizeOut"></output>
       </label>
@@ -40,22 +40,35 @@
 
     <section>
       <label class="row">
-        <span>Marge du bas</span>
+        <span data-i18n="margin"></span>
         <input type="range" id="margin" min="0" max="20" step="1" />
         <output id="marginOut"></output>
       </label>
       <label class="check">
         <input type="checkbox" id="hideNative" />
-        Masquer les sous-titres d'Udemy
+        <span data-i18n="hideNative"></span>
       </label>
       <label class="check">
         <input type="checkbox" id="translateFallback" />
-        Traduire avec Chrome si la langue manque
+        <span data-i18n="translateFallback"></span>
       </label>
     </section>
 
-    <footer id="status">Ouvre une leçon Udemy.</footer>
+    <section class="meta">
+      <label class="row">
+        <span data-i18n="uiLanguage"></span>
+        <select id="uiLanguage"></select>
+      </label>
+      <button type="button" id="reset" data-i18n="reset"></button>
+    </section>
 
+    <footer>
+      <p id="status"></p>
+      <p class="privacy" data-i18n="privacy"></p>
+    </footer>
+
+    <script src="core.js"></script>
+    <script src="i18n.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

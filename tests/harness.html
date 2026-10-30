@@ -81,15 +81,18 @@ qui nous permette de décrire les objets mathématiques et les relations entre e
       // Fake chrome.* — storage with the defaults, and the worker's VTT fetch.
       const listeners = [];
       window.chrome = {
+        i18n: { getUILanguage: () => 'fr-FR' },
         storage: {
           sync: { get: (defaults, cb) => cb({ ...defaults }) },
           onChanged: { addListener: (fn) => listeners.push(fn) },
         },
         runtime: {
           sendMessage: async (message) => ({ ok: true, text: message.url.endsWith('fr.vtt') ? FR : EN }),
-          onMessage: { addListener: () => {} },
+          // Kept, so `await getStatus()` asks the script what the popup would.
+          onMessage: { addListener: (fn) => (window.statusListener = fn) },
         },
       };
+      window.getStatus = () => new Promise((resolve) => window.statusListener({ type: 'DUALSUBS_STATUS' }, null, resolve));
       window.setControls = (shown) => document.getElementById('bar').classList.toggle('hidden', !shown);
       window.setSetting = (key, value) =>
         listeners.forEach((fn) => fn({ [key]: { newValue: value } }, 'sync'));

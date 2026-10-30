@@ -1,0 +1,10 @@
+{
+  "extName": {
+    "message": "Udemy Dual Subtitles",
+    "description": "Nom de l'extension."
+  },
+  "extDescription": {
+    "message": "Regarde Udemy avec deux langues de sous-titres à la fois : la principale, et une traduction plus petite en dessous.",
+    "description": "Description, affichée dans chrome://extensions et le Web Store."
+  }
+}

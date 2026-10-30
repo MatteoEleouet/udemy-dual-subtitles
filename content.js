@@ -13,20 +13,12 @@
   if (window.__dualSubsLoaded) return;
   window.__dualSubsLoaded = true;
 
-  const { parseVtt, textAt, pickTrack } = globalThis.DualSubs;
+  const { parseVtt, textAt, pickTrack, defaultSettings } = globalThis.DualSubs;
 
-  const DEFAULTS = {
-    enabled: true,
-    primary: 'en',
-    secondary: 'fr',
-    primarySize: 100, // % of the base size, which follows the player's height
-    secondarySize: 70,
-    // Gap under the subtitles, % of the player's height: from the bottom edge
-    // when Udemy's control bar is hidden, from the bar when it is showing.
-    margin: 3,
-    hideNative: true,
-    translateFallback: true,
-  };
+  // Sizes are % of a base that follows the player's height. `margin` is the
+  // gap under the subtitles, % of the player's height: from the bottom edge
+  // when Udemy's control bar is hidden, from the bar when it is showing.
+  const DEFAULTS = defaultSettings(chrome.i18n.getUILanguage());
 
   let settings = { ...DEFAULTS };
   const state = {
@@ -151,6 +143,11 @@
   /* Loading a lecture                                                      */
   /* ---------------------------------------------------------------------- */
 
+  /** An error as the popup reports it: a code to translate, plus the raw detail. */
+  function failure(code, error) {
+    return { code, detail: String(error?.message || error) };
+  }
+
   async function loadLecture(lectureId) {
     const token = ++state.loadToken;
     state.primary = { cues: [], info: null, error: null };
@@ -161,7 +158,7 @@
     try {
       captions = await lectureCaptions(lectureId);
     } catch (error) {
-      if (token === state.loadToken) state.primary.error = String(error.message || error);
+      if (token === state.loadToken) state.primary.error = failure('api', error);
       return;
     }
     if (token !== state.loadToken) return;
@@ -171,18 +168,18 @@
     state.primary.info = primary;
     state.secondary.info = secondary;
 
-    if (!primary) state.primary.error = `pas de sous-titres « ${settings.primary} » pour cette leçon`;
+    if (!primary) state.primary.error = { code: 'noTrack', lang: settings.primary };
 
     await Promise.all([
       primary &&
         fetchCues(primary.url).then(
           (cues) => token === state.loadToken && (state.primary.cues = cues),
-          (error) => token === state.loadToken && (state.primary.error = String(error.message || error)),
+          (error) => token === state.loadToken && (state.primary.error = failure('file', error)),
         ),
       secondary &&
         fetchCues(secondary.url).then(
           (cues) => token === state.loadToken && (state.secondary.cues = cues),
-          (error) => token === state.loadToken && (state.secondary.error = String(error.message || error)),
+          (error) => token === state.loadToken && (state.secondary.error = failure('file', error)),
         ),
     ]);
     if (token !== state.loadToken) return;
@@ -190,10 +187,10 @@
     if (!secondary && settings.translateFallback && state.primary.cues.length > 0) {
       const ok = await translateInto(state.secondary, state.primary.cues, token).catch(() => false);
       if (!ok && token === state.loadToken) {
-        state.secondary.error = `pas de sous-titres « ${settings.secondary} », et pas de traducteur intégré dans ce Chrome`;
+        state.secondary.error = { code: 'noTranslator', lang: settings.secondary };
       }
     } else if (!secondary) {
-      state.secondary.error = `pas de sous-titres « ${settings.secondary} » pour cette leçon`;
+      state.secondary.error = { code: 'noTrack', lang: settings.secondary };
     }
     render();
   }
@@ -382,7 +379,9 @@
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message?.type !== 'DUALSUBS_STATUS') return false;
     const describe = (slot) => ({
-      label: slot.info?.label ?? (slot.translated ? 'traduction par Chrome' : null),
+      label: slot.info?.label ?? null,
+      translated: slot.translated,
+      auto: !!slot.info?.auto,
       cues: slot.cues.length,
       error: slot.error,
     });

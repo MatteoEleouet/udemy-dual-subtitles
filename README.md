@@ -1,76 +1,120 @@
 # Udemy Dual Subtitles
 
-Extension Chrome qui affiche **deux langues de sous-titres en même temps** sur Udemy : la langue
-principale (par défaut l'anglais) et, en dessous, une seconde langue plus petite (par défaut le
-français).
+<img src="icons/icon128.png" width="64" align="right" alt="">
 
-![icône](icons/icon48.png)
+Watch Udemy with **two subtitle languages at once**: the main one, and a smaller translation
+underneath. Made for learning a subject in a language you are still learning.
 
-## Ce qu'elle fait
+[![CI](https://github.com/MatteoEleouet/udemy-dual-subtitles/actions/workflows/ci.yml/badge.svg)](https://github.com/MatteoEleouet/udemy-dual-subtitles/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/github/v/release/MatteoEleouet/udemy-dual-subtitles)](https://github.com/MatteoEleouet/udemy-dual-subtitles/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-- Lit les pistes de sous-titres de la leçon en cours, celles du menu CC d'Udemy, et en affiche deux,
-  synchronisées image par image avec la vidéo.
-- Choisit d'abord une piste écrite par l'instructeur, et se rabat sur la piste automatique d'Udemy
-  s'il n'y a qu'elle.
-- **Si le cours n'a pas la seconde langue**, la traduit avec le traducteur intégré à Chrome, qui tourne
-  sur ta machine (Chrome récent requis). La première fois, Chrome peut avoir besoin d'un clic sur la
-  page pour télécharger le modèle de langue.
-- Masque les sous-titres natifs d'Udemy pour éviter le doublon (désactivable).
-- Se place juste au-dessus de la barre de lecture quand elle est affichée, et descend en bas de
-  l'image quand elle se rétracte, comme les sous-titres d'Udemy.
-- Suit les changements de leçon sans recharger la page, et grossit en plein écran.
+> 🇫🇷 [En français plus bas](#en-français).
 
-Réglages (icône de l'extension) : langues, taille de chaque ligne, marge du bas, masquage des sous-titres
-natifs, traduction de secours. Les changements s'appliquent tout de suite sur la vidéo.
+## Features
 
-## Installer
+- **Two languages, in sync.** Any two of the lecture's subtitle tracks, drawn over the player and
+  synchronised every frame. The second line is smaller, so the eye reads the main one first.
+- **Best track first.** A track written by the instructor beats Udemy's automatic one; the
+  automatic one is used when it is all there is.
+- **Translation fallback.** When a course has no track in your second language, Chrome's built-in
+  translator fills in — on your device, nothing sent anywhere (recent Chrome required).
+- **Follows the player.** Sits just above Udemy's control bar while it shows, drops to the bottom of
+  the picture when it hides, scales up in fullscreen, and keeps up when you move to the next lecture.
+- **Yours to set.** Languages (30 to choose from), the size of each line, the bottom margin, hiding
+  Udemy's own captions. Changes apply live on the video.
+- **Interface in English or French**, following your browser or chosen in the popup.
+- **Per user.** Everyone starts with English plus their browser's language; each person's settings
+  stay in their own Chrome profile, synced to their devices by Chrome.
 
-1. Ouvre `chrome://extensions` et active le **Mode développeur**.
-2. **Charger l'extension non empaquetée** → choisis ce dossier (celui qui contient `manifest.json`).
-3. Recharge l'onglet Udemy (F5) et lance une leçon.
+## Install
 
-Pour la mettre à jour après une modification : bouton de rechargement sur sa carte dans
-`chrome://extensions`, puis F5 sur l'onglet Udemy.
+**From a release** (no build needed):
 
-## Si rien ne s'affiche
+1. Download `udemy-dual-subtitles-v*.zip` from the
+   [latest release](https://github.com/MatteoEleouet/udemy-dual-subtitles/releases/latest) and
+   extract it to a folder you will keep.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. **Load unpacked** → choose the extracted folder (the one with `manifest.json`).
+4. Reload any open Udemy tab, and start a lecture.
 
-Ouvre l'icône de l'extension : le bas du popup dit ce qui est chargé pour la leçon.
+**From source:** clone the repository and load its folder the same way — there is no build step.
 
-| Message | Que faire |
+To update: replace the folder (or `git pull`), then press the reload icon on the extension's card.
+
+## Using it
+
+Click the extension's icon on a Udemy lecture. The bottom of the popup says which tracks are
+loaded for this lecture, or why one is missing.
+
+| Popup says | What to do |
 | --- | --- |
-| « Recharge l'onglet Udemy » | L'onglet était ouvert avant l'installation : F5 |
-| « Ouvre une leçon » | Tu es sur la page de présentation, pas dans le lecteur |
-| « pas de sous-titres … pour cette leçon » | La leçon n'a pas cette langue ; essaie la traduction de secours |
-| « Udemy API HTTP 401/403 » | Déconnecté, ou pas inscrit à ce cours |
-| Sous-titres en double | Coupe les sous-titres d'Udemy (bouton CC du lecteur) |
+| "Reload the Udemy tab" | The tab was open before installing: press F5 |
+| "Open a lecture" | You are on the course's landing page, not in the player |
+| "no … subtitles in this lecture" | The lecture lacks that language — turn on the translation fallback |
+| "Udemy did not answer (401/403)" | Signed out, or not enrolled in that course |
+| Subtitles appear twice | Turn off Udemy's own captions with the player's CC button |
 
-## Comment c'est fait
+## How it works
 
-Aucune étape de build : les fichiers sont chargés tels quels par Chrome.
+No build step and no dependencies: Chrome loads the files as they are.
 
-| Fichier | Rôle |
+| File | Role |
 | --- | --- |
-| `core.js` | Pur : lecture des VTT, réplique à l'instant t, choix de la piste par langue |
-| `content.js` | Sur la page : API Udemy (avec ta session), superposition, synchronisation, traduction de secours |
-| `background.js` | Télécharge les fichiers de sous-titres sur `udemycdn.com`, et nulle part ailleurs |
-| `popup.*` | Réglages et état de la leçon |
-| `content.css` | Style des deux lignes, masquage des sous-titres natifs |
+| `core.js` | Pure: WebVTT parsing, the line on screen at a time, track choice, default settings |
+| `content.js` | On the page: Udemy's course API (with your session), the overlay, sync, control bar, translation |
+| `background.js` | Downloads subtitle files from `udemycdn.com`, and nowhere else |
+| `popup.*`, `i18n.js` | Settings, status, interface strings |
+| `_locales/` | The extension's name and description, per language |
 
-La liste des pistes vient de l'API de cours d'Udemy, celle qu'utilise son propre lecteur, lue depuis
-la page avec ta session. L'extension ne stocke aucun identifiant et n'envoie rien ailleurs qu'à Udemy.
-Cette API n'est pas documentée : un changement côté Udemy peut casser l'extension.
+The track list comes from Udemy's course API — the one its own player's CC menu is built from —
+read from the page with your session. That API is undocumented, so a change on Udemy's side can
+break the extension; issues are welcome.
 
-## Tests
+## Development
 
 ```bash
-node --test tests/core.test.js
+npm test          # unit tests (node --test, no dependencies)
+npm run check     # syntax check of every script
+npm run package   # dist/udemy-dual-subtitles-v<version>.zip
 ```
 
-Pour voir le rendu sans compte Udemy, `tests/harness.html` simule un lecteur avec une vidéo qui
-défile, l'API et le CDN :
+`tests/harness.html` shows the overlay without a Udemy account — a playing video, a fake API, CDN
+and control bar:
 
 ```bash
 python -m http.server 8765
+# then open http://localhost:8765/tests/harness.html
 ```
 
-puis ouvre `http://localhost:8765/tests/harness.html`.
+**Adding an interface language:** copy the `en` block in `i18n.js`, translate it, and add a
+`_locales/<code>/messages.json`. The tests check that no string is missing.
+
+## Privacy
+
+No account, no analytics, no server of ours. Requests go to Udemy only. Details in
+[PRIVACY.md](PRIVACY.md).
+
+## License
+
+[MIT](LICENSE) © Matteo Eleouet. Not affiliated with Udemy.
+
+---
+
+## En français
+
+Extension Chrome qui affiche **deux langues de sous-titres en même temps** sur Udemy : la langue
+principale, et une traduction plus petite en dessous.
+
+- Les deux pistes sont synchronisées avec la vidéo. La piste écrite par l'instructeur passe avant la
+  piste automatique.
+- S'il manque la seconde langue, le traducteur intégré à Chrome prend le relais, en local.
+- Les sous-titres suivent la barre de lecture d'Udemy : juste au-dessus quand elle est affichée, en
+  bas de l'image quand elle se rétracte.
+- Réglages dans l'icône de l'extension : langues, taille de chaque ligne, marge du bas, langue de
+  l'interface (anglais ou français). Chacun garde ses propres réglages dans son profil Chrome.
+
+**Installer :** télécharge le zip de la
+[dernière version](https://github.com/MatteoEleouet/udemy-dual-subtitles/releases/latest), décompresse-le,
+puis dans `chrome://extensions` active le **Mode développeur** → **Charger l'extension non
+empaquetée** → choisis le dossier décompressé. Recharge l'onglet Udemy.
