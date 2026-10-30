@@ -18,11 +18,12 @@ factorization.
 Short form, no hours.
 `;
 
-test('parseVtt reads timings, strips markup and keeps line breaks', () => {
+test('parseVtt reads timings, strips markup and rejoins broken lines', () => {
   const cues = parseVtt(VTT);
   assert.equal(cues.length, 3);
   assert.deepEqual(cues[0], { start: 1, end: 3.5, text: 'Hello & welcome.' });
-  assert.equal(cues[1].text, 'Today: prime\nfactorization.');
+  // The file's own line break is dropped: the overlay wraps to the player.
+  assert.equal(cues[1].text, 'Today: prime factorization.');
   assert.equal(cues[2].start, 62.5);
 });
 
@@ -34,7 +35,7 @@ test('textAt finds the cue on screen, and nothing between cues', () => {
   const cues = parseVtt(VTT);
   assert.equal(textAt(cues, 2), 'Hello & welcome.');
   assert.equal(textAt(cues, 3.7), '');
-  assert.equal(textAt(cues, 5), 'Today: prime\nfactorization.');
+  assert.equal(textAt(cues, 5), 'Today: prime factorization.');
   assert.equal(textAt(cues, 0), '');
   assert.equal(textAt([], 5), '');
 });

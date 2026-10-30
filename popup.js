@@ -4,7 +4,7 @@ const DEFAULTS = {
   secondary: 'fr',
   primarySize: 100,
   secondarySize: 70,
-  bottom: 8,
+  margin: 3,
   hideNative: true,
   translateFallback: true,
 };
@@ -37,7 +37,7 @@ for (const id of ['primary', 'secondary']) {
 function showOutputs() {
   $('primarySizeOut').value = `${$('primarySize').value}%`;
   $('secondarySizeOut').value = `${$('secondarySize').value}%`;
-  $('bottomOut').value = `${$('bottom').value}%`;
+  $('marginOut').value = `${$('margin').value}%`;
 }
 
 chrome.storage.sync.get(DEFAULTS, (settings) => {

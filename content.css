@@ -1,9 +1,11 @@
 /* Two lines over the player. Never catches clicks: the controls stay usable. */
 .dualsubs-overlay {
   position: absolute;
-  left: 5%;
-  right: 5%;
-  bottom: 8%;
+  left: 3%;
+  right: 3%;
+  bottom: 3%;
+  /* Glides up and down with Udemy's control bar rather than jumping. */
+  transition: bottom 0.2s ease;
   z-index: 2147483000;
   display: flex;
   flex-direction: column;
@@ -30,8 +32,10 @@
   font-weight: 500;
 }
 
-/* Smaller and a little dimmer, so the eye goes to the main language first. */
+/* Smaller and a little dimmer, so the eye goes to the main language first.
+   As wide as the main line may be: French runs longer than English. */
 .dualsubs-secondary {
+  max-width: 94%;
   font-size: var(--dualsubs-secondary, 15px);
   color: #f5e6a8;
   background: rgba(0, 0, 0, 0.6);

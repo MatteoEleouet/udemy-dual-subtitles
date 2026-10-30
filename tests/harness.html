@@ -18,12 +18,16 @@
       /* What Udemy's own captions look like in the DOM, to check they are hidden. */
       .native { position: absolute; bottom: 30%; width: 100%; text-align: center; color: red; font-size: 20px; }
       p { text-align: center; }
+      #bar { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: rgba(28, 29, 31, 0.9); transition: opacity 0.2s; }
+      #bar.hidden { opacity: 0; }
     </style>
   </head>
   <body>
     <div class="player">
       <video muted playsinline></video>
       <div class="native" data-purpose="captions-cue-text">NATIVE UDEMY CAPTION (should be hidden)</div>
+      <!-- Stands in for Udemy's control bar; toggled with setControls(). -->
+      <div class="control-bar--control-bar--x1y2z" id="bar"></div>
     </div>
     <p id="clock"></p>
 
@@ -40,18 +44,20 @@ Hello and welcome to this lecture on prime factorization.
 Every whole number can be written as a product of primes.
 
 00:00:06.000 --> 00:00:30.000
-For example, twelve is two times two times three.`;
+For this, we need a tool which will allow us to describe mathematical objects and relationships between them.`;
 
       const FR = `WEBVTT
 
 00:00:00.200 --> 00:00:03.000
-Bonjour et bienvenue dans ce cours sur la décomposition en facteurs premiers.
+Bonjour et bienvenue dans ce cours
+sur la décomposition en facteurs premiers.
 
 00:00:03.000 --> 00:00:06.000
 Tout nombre entier s'écrit comme un produit de nombres premiers.
 
 00:00:06.000 --> 00:00:30.000
-Par exemple, douze vaut deux fois deux fois trois.`;
+Pour cela, nous avons besoin d'un outil
+qui nous permette de décrire les objets mathématiques et les relations entre eux.`;
 
       // Fake Udemy API, answering the two requests the content script makes.
       document.body.dataset.clpCourseId = '99';
@@ -84,6 +90,7 @@ Par exemple, douze vaut deux fois deux fois trois.`;
           onMessage: { addListener: () => {} },
         },
       };
+      window.setControls = (shown) => document.getElementById('bar').classList.toggle('hidden', !shown);
       window.setSetting = (key, value) =>
         listeners.forEach((fn) => fn({ [key]: { newValue: value } }, 'sync'));
 

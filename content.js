@@ -21,7 +21,9 @@
     secondary: 'fr',
     primarySize: 100, // % of the base size, which follows the player's height
     secondarySize: 70,
-    bottom: 8, // % of the player's height
+    // Gap under the subtitles, % of the player's height: from the bottom edge
+    // when Udemy's control bar is hidden, from the bar when it is showing.
+    margin: 3,
     hideNative: true,
     translateFallback: true,
   };
@@ -233,7 +235,72 @@
     const base = Math.min(44, Math.max(13, height * 0.048));
     overlay.style.setProperty('--dualsubs-primary', `${(base * settings.primarySize) / 100}px`);
     overlay.style.setProperty('--dualsubs-secondary', `${(base * settings.secondarySize) / 100}px`);
-    overlay.style.bottom = `${settings.bottom}%`;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Following Udemy's control bar                                          */
+  /* ---------------------------------------------------------------------- */
+
+  // Udemy's class names carry a build hash (`control-bar--control-bar--a1b2`),
+  // hence substring matches. The last two are generic player conventions.
+  const CONTROL_BAR = [
+    '[class*="control-bar--control-bar--"]',
+    '[data-purpose="video-controls"]',
+    '.vjs-control-bar',
+    '[class*="control-bar"]',
+  ];
+
+  let controlBar = null;
+  let lastActivity = 0;
+
+  /** The bar: a wide, short strip near the player, searched from a few levels up. */
+  function findControlBar(host) {
+    let root = host;
+    for (let i = 0; i < 4 && root.parentElement; i += 1) root = root.parentElement;
+    const width = host.clientWidth;
+    for (const selector of CONTROL_BAR) {
+      for (const element of root.querySelectorAll(selector)) {
+        const rect = element.getBoundingClientRect();
+        if (rect.width >= width * 0.5 && rect.height >= 16 && rect.height <= 200) return element;
+      }
+    }
+    return null;
+  }
+
+  /** Shown, as opposed to faded out: Udemy hides the bar with opacity or visibility. */
+  function isShown(element) {
+    let node = element;
+    for (let i = 0; i < 3 && node; i += 1, node = node.parentElement) {
+      const style = getComputedStyle(node);
+      if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) < 0.1) return false;
+    }
+    return element.getBoundingClientRect().height > 0;
+  }
+
+  /**
+   * Sit just above the control bar while it shows, and drop to the bottom of
+   * the picture when it slides away — what Udemy's own captions do.
+   */
+  function placeOverlay() {
+    const overlay = state.overlay;
+    const host = overlay?.parentElement;
+    if (!host) return;
+    const box = host.getBoundingClientRect();
+    const margin = (box.height * settings.margin) / 100;
+    let bottom = margin;
+
+    if (controlBar && !controlBar.isConnected) controlBar = null;
+    if (controlBar) {
+      if (isShown(controlBar)) {
+        const bar = controlBar.getBoundingClientRect();
+        bottom = Math.max(margin, box.bottom - bar.top + margin / 2);
+      }
+    } else if (state.video?.paused || Date.now() - lastActivity < 2500) {
+      // No bar found: assume it shows while paused or while the mouse moves.
+      bottom = Math.max(margin, box.height * 0.12);
+    }
+    const value = `${Math.round(bottom)}px`;
+    if (overlay.style.bottom !== value) overlay.style.bottom = value;
   }
 
   function setLine(element, text) {
@@ -253,23 +320,25 @@
     const time = video.currentTime;
     setLine(overlay.children[0], textAt(state.primary.cues, time));
     setLine(overlay.children[1], textAt(state.secondary.cues, time));
+    placeOverlay();
   }
 
-  /** Every frame while playing; on demand when paused or seeking. */
+  /**
+   * Every frame, paused or not: the control bar slides in and out on mouse
+   * movement while paused too. Chrome stops the frames of a hidden tab.
+   */
   function loop() {
     render();
-    state.frame = state.video && !state.video.paused ? requestAnimationFrame(loop) : 0;
+    state.frame = state.video ? requestAnimationFrame(loop) : 0;
   }
 
   function attachVideo(video) {
     if (state.video === video) return;
     state.video = video;
-    for (const type of ['play', 'seeked', 'timeupdate', 'loadedmetadata']) {
-      video.addEventListener(type, () => {
-        if (!state.frame) loop();
-      });
-    }
-    loop();
+    controlBar = null;
+    const host = video.parentElement?.parentElement ?? video.parentElement;
+    host?.addEventListener('mousemove', () => (lastActivity = Date.now()), { passive: true });
+    if (!state.frame) loop();
   }
 
   /* ---------------------------------------------------------------------- */
@@ -285,6 +354,10 @@
       loadLecture(lectureId);
     }
     if (state.video && !state.video.isConnected) state.video = null;
+    // Looked for once a second, not every frame: the bar may render late.
+    if (state.video && !controlBar && state.overlay?.parentElement) {
+      controlBar = findControlBar(state.overlay.parentElement);
+    }
   }
 
   chrome.storage.sync.get(DEFAULTS, (stored) => {

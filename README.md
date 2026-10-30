@@ -16,9 +16,11 @@ français).
   sur ta machine (Chrome récent requis). La première fois, Chrome peut avoir besoin d'un clic sur la
   page pour télécharger le modèle de langue.
 - Masque les sous-titres natifs d'Udemy pour éviter le doublon (désactivable).
+- Se place juste au-dessus de la barre de lecture quand elle est affichée, et descend en bas de
+  l'image quand elle se rétracte, comme les sous-titres d'Udemy.
 - Suit les changements de leçon sans recharger la page, et grossit en plein écran.
 
-Réglages (icône de l'extension) : langues, taille de chaque ligne, hauteur, masquage des sous-titres
+Réglages (icône de l'extension) : langues, taille de chaque ligne, marge du bas, masquage des sous-titres
 natifs, traduction de secours. Les changements s'appliquent tout de suite sur la vidéo.
 
 ## Installer

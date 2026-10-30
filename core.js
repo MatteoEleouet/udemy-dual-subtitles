@@ -17,7 +17,14 @@
 
   const ENTITIES = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ' };
 
-  /** Cue markup (<v>, <c.x>, <b>, karaoke timestamps) down to plain text. */
+  /**
+   * Cue markup (<v>, <c.x>, <b>, karaoke timestamps) down to plain text.
+   *
+   * Line breaks inside a cue are joined with a space. They were placed for
+   * the file author's player width — Udemy's translated tracks break every
+   * few words — and keeping them squeezes a sentence into a narrow column.
+   * The overlay wraps to the real player width instead.
+   */
   function cleanText(raw) {
     return raw
       .replace(/<[^>]+>/g, '')
@@ -25,7 +32,7 @@
       .split('\n')
       .map((line) => line.trim())
       .filter(Boolean)
-      .join('\n');
+      .join(' ');
   }
 
   /** WebVTT source → cues sorted by start, each `{ start, end, text }`. */
