@@ -129,6 +129,9 @@
       secondary: own && own !== 'en' ? own : 'fr',
       primarySize: 100,
       secondarySize: 70,
+      // Widest a line may grow, % of the player's width, before it wraps.
+      primaryWidth: 94,
+      secondaryWidth: 88,
       margin: 3,
       hideNative: true,
       translateFallback: true,

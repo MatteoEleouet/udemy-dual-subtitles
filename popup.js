@@ -51,6 +51,8 @@ function showValues() {
   $('primarySizeOut').value = `${settings.primarySize}%`;
   $('secondarySizeOut').value = `${settings.secondarySize}%`;
   $('marginOut').value = `${settings.margin}%`;
+  $('primaryWidthOut').value = `${settings.primaryWidth}%`;
+  $('secondaryWidthOut').value = `${settings.secondaryWidth}%`;
 }
 
 function render() {

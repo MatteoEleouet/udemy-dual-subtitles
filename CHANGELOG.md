@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] — 2026-10-30
+
+### Added
+
+- **Width of each line**, next to its size: how wide the main and the second line may grow, as a
+  share of the player's width, before wrapping. Defaults keep the previous look (94 % and 88 %).
+
 ## [1.1.0] — 2026-10-30
 
 ### Added

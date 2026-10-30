@@ -232,6 +232,8 @@
     const base = Math.min(44, Math.max(13, height * 0.048));
     overlay.style.setProperty('--dualsubs-primary', `${(base * settings.primarySize) / 100}px`);
     overlay.style.setProperty('--dualsubs-secondary', `${(base * settings.secondarySize) / 100}px`);
+    overlay.style.setProperty('--dualsubs-primary-width', `${settings.primaryWidth}%`);
+    overlay.style.setProperty('--dualsubs-secondary-width', `${settings.secondaryWidth}%`);
   }
 
   /* ---------------------------------------------------------------------- */

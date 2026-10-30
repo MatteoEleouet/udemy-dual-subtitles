@@ -25,8 +25,8 @@ underneath. Made for learning a subject in a language you are still learning.
   translator fills in — on your device, nothing sent anywhere (recent Chrome required).
 - **Follows the player.** Sits just above Udemy's control bar while it shows, drops to the bottom of
   the picture when it hides, scales up in fullscreen, and keeps up when you move to the next lecture.
-- **Yours to set.** Languages (30 to choose from), the size of each line, the bottom margin, hiding
-  Udemy's own captions. Changes apply live on the video.
+- **Yours to set.** Languages (30 to choose from), the size and the width of each line, the bottom
+  margin, hiding Udemy's own captions. Changes apply live on the video.
 - **Interface in English or French**, following your browser or chosen in the popup.
 - **Per user.** Everyone starts with English plus their browser's language; each person's settings
   stay in their own Chrome profile, synced to their devices by Chrome.
@@ -115,8 +115,8 @@ principale, et une traduction plus petite en dessous.
 - S'il manque la seconde langue, le traducteur intégré à Chrome prend le relais, en local.
 - Les sous-titres suivent la barre de lecture d'Udemy : juste au-dessus quand elle est affichée, en
   bas de l'image quand elle se rétracte.
-- Réglages dans l'icône de l'extension : langues, taille de chaque ligne, marge du bas, langue de
-  l'interface (anglais ou français). Chacun garde ses propres réglages dans son profil Chrome.
+- Réglages dans l'icône de l'extension : langues, taille et largeur de chaque ligne, marge du bas,
+  langue de l'interface (anglais ou français). Chacun garde ses propres réglages dans son profil Chrome.
 
 **Installer :** télécharge le zip de la
 [dernière version](https://github.com/MatteoEleouet/udemy-dual-subtitles/releases/latest), décompresse-le,

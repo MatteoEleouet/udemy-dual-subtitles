@@ -10,6 +10,12 @@ test('defaults put English on top and the browser language underneath', () => {
   assert.equal(defaultSettings('pt_BR').primary, 'en');
 });
 
+test('defaults keep both lines as wide as before, the second a little narrower', () => {
+  const defaults = defaultSettings('fr');
+  assert.equal(defaults.primaryWidth, 94);
+  assert.equal(defaults.secondaryWidth, 88);
+});
+
 test('an English browser gets French underneath, not English twice', () => {
   assert.equal(defaultSettings('en-US').secondary, 'fr');
   assert.equal(defaultSettings(undefined).secondary, 'fr');
