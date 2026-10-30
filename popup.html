@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Udemy Dual Subtitles</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Double sous-titres</h1>
+      <label class="switch" title="Activer / désactiver">
+        <input type="checkbox" id="enabled" />
+        <span></span>
+      </label>
+    </header>
+
+    <section>
+      <label class="row">
+        <span>Langue principale</span>
+        <select id="primary"></select>
+      </label>
+      <label class="row">
+        <span>Taille</span>
+        <input type="range" id="primarySize" min="60" max="160" step="5" />
+        <output id="primarySizeOut"></output>
+      </label>
+    </section>
+
+    <section>
+      <label class="row">
+        <span>Seconde langue</span>
+        <select id="secondary"></select>
+      </label>
+      <label class="row">
+        <span>Taille</span>
+        <input type="range" id="secondarySize" min="40" max="140" step="5" />
+        <output id="secondarySizeOut"></output>
+      </label>
+    </section>
+
+    <section>
+      <label class="row">
+        <span>Hauteur</span>
+        <input type="range" id="bottom" min="2" max="40" step="1" />
+        <output id="bottomOut"></output>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="hideNative" />
+        Masquer les sous-titres d'Udemy
+      </label>
+      <label class="check">
+        <input type="checkbox" id="translateFallback" />
+        Traduire avec Chrome si la langue manque
+      </label>
+    </section>
+
+    <footer id="status">Ouvre une leçon Udemy.</footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

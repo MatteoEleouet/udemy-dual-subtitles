@@ -1,0 +1,49 @@
+/* Two lines over the player. Never catches clicks: the controls stay usable. */
+.dualsubs-overlay {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: 8%;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3em;
+  pointer-events: none;
+  text-align: center;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dualsubs-line {
+  max-width: 100%;
+  padding: 0.12em 0.45em;
+  border-radius: 0.25em;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  line-height: 1.3;
+  white-space: pre-line;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.dualsubs-primary {
+  font-size: var(--dualsubs-primary, 22px);
+  font-weight: 500;
+}
+
+/* Smaller and a little dimmer, so the eye goes to the main language first. */
+.dualsubs-secondary {
+  font-size: var(--dualsubs-secondary, 15px);
+  color: #f5e6a8;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Udemy's own captions, hidden while ours are on so the text is not doubled. */
+.dualsubs-hide-native [data-purpose='captions-cue-text'],
+.dualsubs-hide-native [class*='captions-display--captions-container'],
+.dualsubs-hide-native [class*='captions-display--vjs-ud-captions-cue-text'] {
+  display: none !important;
+}
+.dualsubs-hide-native video::cue {
+  color: transparent;
+  background: transparent;
+}
