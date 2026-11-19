@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Udemy Dual Subtitles</title>
+    <link rel="stylesheet" href="popup.css" />
+    <style>
+      body { width: auto; max-width: 560px; margin: 32px auto; }
+      p { line-height: 1.5; }
+      #result { white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1 data-i18n="importTitle"></h1>
+    <p data-i18n="importHelp"></p>
+    <p>
+      <button type="button" id="pick" data-i18n="importPick"></button>
+      <button type="button" id="clear" data-i18n="importClear"></button>
+    </p>
+    <input type="file" id="folder" webkitdirectory multiple hidden />
+    <p id="result"></p>
+    <script src="core.js"></script>
+    <script src="i18n.js"></script>
+    <script src="import.js"></script>
+  </body>
+</html>

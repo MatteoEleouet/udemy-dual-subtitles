@@ -88,6 +88,9 @@ $('reset').addEventListener('click', () => {
   });
 });
 
+// A file dialog closes a popup, so importing happens in a tab.
+$('import').addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('import.html') }));
+
 /** One status line: what a track is, or why it is missing. */
 function describe(name, slot) {
   if (slot.error) {
@@ -95,7 +98,7 @@ function describe(name, slot) {
     return t('line', { name, text: t(slot.error.code, { lang, detail: slot.error.detail ?? '' }) });
   }
   if (slot.cues === 0) return t('line', { name, text: t('loading') });
-  const kind = slot.translated ? t('translated') : slot.auto ? t('auto') : '';
+  const kind = slot.translated ? t('translated') : slot.local ? t('local') : slot.auto ? t('auto') : '';
   const label = slot.label ?? '';
   return t('line', { name, text: `${[label, kind].filter(Boolean).join(', ')} — ${t('cues', { n: slot.cues })}` });
 }

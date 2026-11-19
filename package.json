@@ -8,7 +8,7 @@
   "repository": "github:MatteoEleouet/udemy-dual-subtitles",
   "scripts": {
     "test": "node --test tests/core.test.js tests/i18n.test.js",
-    "check": "node --check core.js && node --check content.js && node --check popup.js && node --check i18n.js && node --check background.js",
+    "check": "node --check core.js && node --check content.js && node --check popup.js && node --check i18n.js && node --check background.js && node --check import.js",
     "package": "node scripts/package.js"
   },
   "engines": {

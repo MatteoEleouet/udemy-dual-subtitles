@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **Local subtitles**: an import page (button in the popup) reads a course folder (`course.json` plus
+  `NNN - Title.<lang>.srt|vtt` files), ties each file to its lecture and keeps it in
+  `chrome.storage.local`. Used for a language Udemy lacks, before Chrome's translator. New
+  `unlimitedStorage` permission.
+
 ## [1.2.0] — 2026-10-30
 
 ### Added

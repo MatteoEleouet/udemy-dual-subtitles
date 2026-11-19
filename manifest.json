@@ -5,7 +5,7 @@
   "description": "__MSG_extDescription__",
   "default_locale": "en",
   "homepage_url": "https://github.com/MatteoEleouet/udemy-dual-subtitles",
-  "permissions": ["storage"],
+  "permissions": ["storage", "unlimitedStorage"],
   "host_permissions": ["https://*.udemy.com/*", "https://*.udemycdn.com/*"],
   "background": {
     "service_worker": "background.js"

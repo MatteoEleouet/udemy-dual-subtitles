@@ -29,6 +29,8 @@ const INCLUDE = [
   'popup.html',
   'popup.css',
   'popup.js',
+  'import.html',
+  'import.js',
   'icons',
   '_locales',
 ];

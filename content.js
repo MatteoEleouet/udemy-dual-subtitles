@@ -92,6 +92,20 @@
     return parseVtt(reply.text);
   }
 
+  /**
+   * Subtitles imported from disk (import.html), kept in chrome.storage.local
+   * under `local:<lectureId>:<language>`. Used for a language the course has
+   * no track in.
+   */
+  async function localTrack(lectureId, lang) {
+    const base = String(lang || '').split(/[-_]/)[0].toLowerCase();
+    if (!base) return null;
+    const key = `local:${lectureId}:${base}`;
+    const stored = await chrome.storage.local.get(key);
+    const cues = stored[key] ? parseVtt(stored[key]) : [];
+    return cues.length ? { cues, label: base } : null;
+  }
+
   /* ---------------------------------------------------------------------- */
   /* On-device translation, when the course lacks the second language        */
   /* ---------------------------------------------------------------------- */
@@ -150,8 +164,8 @@
 
   async function loadLecture(lectureId) {
     const token = ++state.loadToken;
-    state.primary = { cues: [], info: null, error: null };
-    state.secondary = { cues: [], info: null, error: null, translated: false };
+    state.primary = { cues: [], info: null, error: null, local: false };
+    state.secondary = { cues: [], info: null, error: null, translated: false, local: false };
     render();
 
     let captions;
@@ -168,7 +182,23 @@
     state.primary.info = primary;
     state.secondary.info = secondary;
 
-    if (!primary) state.primary.error = { code: 'noTrack', lang: settings.primary };
+    // A language Udemy lacks may have been imported from files on disk.
+    const [localPrimary, localSecondary] = await Promise.all([
+      primary ? null : localTrack(lectureId, settings.primary),
+      secondary ? null : localTrack(lectureId, settings.secondary),
+    ]);
+    if (token !== state.loadToken) return;
+    for (const [slot, local] of [
+      [state.primary, localPrimary],
+      [state.secondary, localSecondary],
+    ]) {
+      if (!local) continue;
+      slot.cues = local.cues;
+      slot.local = true;
+      slot.info = { label: local.label, auto: false };
+    }
+
+    if (!primary && !localPrimary) state.primary.error = { code: 'noTrack', lang: settings.primary };
 
     await Promise.all([
       primary &&
@@ -184,7 +214,9 @@
     ]);
     if (token !== state.loadToken) return;
 
-    if (!secondary && settings.translateFallback && state.primary.cues.length > 0) {
+    if (!secondary && localSecondary) {
+      // Imported subtitles: nothing more to fetch or translate.
+    } else if (!secondary && settings.translateFallback && state.primary.cues.length > 0) {
       const ok = await translateInto(state.secondary, state.primary.cues, token).catch(() => false);
       if (!ok && token === state.loadToken) {
         state.secondary.error = { code: 'noTranslator', lang: settings.secondary };
@@ -383,6 +415,7 @@
     const describe = (slot) => ({
       label: slot.info?.label ?? null,
       translated: slot.translated,
+      local: !!slot.local,
       auto: !!slot.info?.auto,
       cues: slot.cues.length,
       error: slot.error,
